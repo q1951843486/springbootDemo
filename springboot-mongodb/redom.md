@@ -1,0 +1,2 @@
+springboot 集成mongodb 
+使用redis生成mongodb中的id值 从0开始
