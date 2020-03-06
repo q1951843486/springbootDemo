@@ -11,4 +11,5 @@ public class Constants {
     public static final String TABLE = "table";
     public static final String TABLE_STUDENT = "student";
     public static final String TABLE_USER = "user";
+    public static final String TABLE_GRADE = "grade";
 }
