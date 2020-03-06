@@ -1,17 +1,22 @@
 package com.meiya.controller;
 
 import com.meiya.common.Constants;
+import com.meiya.common.PageListVo;
 import com.meiya.common.SequenceFactory;
 import com.meiya.modul.User;
 import com.meiya.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Description
@@ -55,16 +60,42 @@ public class UserController {
         User user1 =userService.updateUserById(user);
         return user1;
     }
-    @RequestMapping(value = "/del")
+    @RequestMapping(value = "/user/{id}",method = RequestMethod.DELETE)
     @ResponseBody
-    public String del(){
-        int count = userService.deleteUserById(1);
+    public String del(@PathVariable("id")Long id){
+        int count = userService.deleteUserById(id);
         if (count == 1){
 
             return "成功";
 
         }
         return "失败";
+    }
+
+
+    /**
+     * 分页查询
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/user/getPageList")
+    public PageListVo<User> getPageList(){
+
+        int pageNo  = 1;
+        int pageSize = 100;
+        Map<String,Object> parmMap = new HashMap<>(16);
+        parmMap.put("pageNo",pageNo);
+        parmMap.put("pageSize",pageSize);
+        List<User> userList = userService.queryUserPageList(parmMap);
+        PageListVo<User> pageListVo = new PageListVo<>();
+        pageListVo.setPageNo(pageNo);
+        pageListVo.setPageSize(pageSize);
+        pageListVo.setPageList(userList);
+        if (ObjectUtils.isEmpty(userList)){
+            pageListVo.setMsg("失败");
+        }
+        pageListVo.setMsg("成功");
+        return pageListVo;
 
     }
 

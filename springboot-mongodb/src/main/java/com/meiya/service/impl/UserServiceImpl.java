@@ -9,6 +9,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Description
  * @ClassName UserServcieImpl
@@ -45,10 +48,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int deleteUserById(int i) {
+    public int deleteUserById(Long i) {
         Query query = new Query(Criteria.where("id").is(i));
         DeleteResult result = mongoTemplate.remove(query, User.class);
         return (int) result.getDeletedCount();
+    }
+
+    @Override
+    public List<User> queryUserPageList(Map<String, Object> parmMap) {
+        Query query = new Query(new Criteria());
+        Integer pageNo = (Integer) parmMap.get("pageNo");
+        Integer pageSize = (Integer) parmMap.get("pageSize");
+        query.skip((pageNo -1)* pageSize);
+        query.limit(pageSize);
+        List<User> userList =mongoTemplate.find(query,User.class);
+        return userList;
     }
 
 
