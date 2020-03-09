@@ -138,7 +138,7 @@ public class UserController {
      * gte: 大于等于,lte小于等于…注意查询的时候各个字段的类型要和mongodb中数据类型一致
      * 查询 条件>=
      */
-    @RequestMapping(value = "/user/{age}")
+    @RequestMapping(value = "/users/{age}")
     @ResponseBody
     public PageListVo<User> getUserListByGteAge(@PathVariable(value = "age")Integer age){
         Map map = new HashMap(16);
@@ -163,6 +163,14 @@ public class UserController {
     public List getUserListSortByAge(){
 
         return userService.queryUserListSortByAge();
+
+
+    }
+    @RequestMapping(value = "/user/{name}")
+    @ResponseBody
+    public List getUserListOrderByName(@PathVariable(value = "name")String name){
+
+        return userService.queryUserListOrderByName(name);
 
 
     }

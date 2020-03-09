@@ -79,4 +79,11 @@ public interface UserService {
      * @return
      */
     List queryUserListSortByAge();
+
+    /**
+     * 按姓名分组
+     * @param name
+     * @return
+     */
+    List queryUserListOrderByName(String name);
 }

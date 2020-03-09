@@ -2,13 +2,18 @@ package com.meiya.service.impl;
 
 import com.meiya.modul.User;
 import com.meiya.service.UserService;
+import com.mongodb.BasicDBList;
 import com.mongodb.client.result.DeleteResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
+import org.springframework.data.mongodb.core.mapreduce.GroupBy;
+import org.springframework.data.mongodb.core.mapreduce.GroupByResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -92,6 +97,13 @@ public class UserServiceImpl implements UserService {
         query.with(sort);
 
         return mongoTemplate.find(query,User.class);
+    }
+
+    @Override
+    public List queryUserListOrderByName(String name) {
+        Query query = new Query();
+
+        return null;
     }
 
 
