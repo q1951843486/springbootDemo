@@ -51,4 +51,18 @@ public interface UserService {
      * @return
      */
     List<User> queryUserPageList(Map<String, Object> parmMap);
+
+    /**
+     * 查询 name and age
+     * @param parmMap
+     * @return
+     */
+    List queryUserListByNameAndAge(Map parmMap);
+
+    /**
+     * 查询 name or age
+     * @param parmMap
+     * @return
+     */
+    List queryUserListByNameOrAge(Map parmMap);
 }

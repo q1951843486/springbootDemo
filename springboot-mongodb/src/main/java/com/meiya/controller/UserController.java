@@ -100,6 +100,40 @@ public class UserController {
     }
 
 
+    /**
+     * 查询 name and age
+     *
+     * @param name
+     * @param age
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/user/{name}/{age}")
+    public List getUserByNameAndAge(@PathVariable(value = "name")String name,@PathVariable(value = "age")String age){
+        Map parmMap = new HashMap(16);
+        parmMap.put("name",name);
+        parmMap.put("age",age);
+
+
+        return userService.queryUserListByNameAndAge(parmMap);
+
+    }
+
+    /**
+     * 查询name or age
+     *
+     *
+     */
+    @RequestMapping(value = "/user/a")
+    @ResponseBody
+    public List getUserByNameOrAge(){
+        Map parmMap = new HashMap(16);
+        parmMap.put("name","张三");
+        parmMap.put("age",0);
+        return userService.queryUserListByNameOrAge(parmMap);
+    }
+
+
 
 
 }

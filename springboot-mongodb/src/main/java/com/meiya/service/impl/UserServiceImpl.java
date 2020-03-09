@@ -65,5 +65,17 @@ public class UserServiceImpl implements UserService {
         return userList;
     }
 
+    @Override
+    public List queryUserListByNameAndAge(Map parmMap) {
+        Query query = new Query(new Criteria().and("name").is(parmMap.get("name")).and("age").is(parmMap.get("age")));
+        return mongoTemplate.find(query,User.class);
+    }
+
+    @Override
+    public List queryUserListByNameOrAge(Map parmMap) {
+        Query query = new Query(new Criteria().orOperator(Criteria.where("name").is(parmMap.get("name")).orOperator(Criteria.where("age").is(parmMap.get("age")))));
+        return mongoTemplate.find(query,User.class);
+    }
+
 
 }
