@@ -4,13 +4,14 @@ import com.meiya.modul.User;
 import com.meiya.service.UserService;
 import com.mongodb.client.result.DeleteResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Description
@@ -74,6 +75,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public List queryUserListByNameOrAge(Map parmMap) {
         Query query = new Query(new Criteria().orOperator(Criteria.where("name").is(parmMap.get("name")).orOperator(Criteria.where("age").is(parmMap.get("age")))));
+        return mongoTemplate.find(query,User.class);
+    }
+
+    @Override
+    public List queryUserListByGteAge(Map map) {
+        Query query = new Query(new Criteria("age").gte(map.get("age"))).limit((Integer) map.get("pageSize"));
+
+        return mongoTemplate.find(query,User.class);
+    }
+
+    @Override
+    public List queryUserListSortByAge() {
+        Query query = new Query();
+        Sort sort = Sort.by("age");
+        query.with(sort);
+
         return mongoTemplate.find(query,User.class);
     }
 

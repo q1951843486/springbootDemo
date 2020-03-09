@@ -134,6 +134,40 @@ public class UserController {
     }
 
 
+    /**
+     * gte: 大于等于,lte小于等于…注意查询的时候各个字段的类型要和mongodb中数据类型一致
+     * 查询 条件>=
+     */
+    @RequestMapping(value = "/user/{age}")
+    @ResponseBody
+    public PageListVo<User> getUserListByGteAge(@PathVariable(value = "age")Integer age){
+        Map map = new HashMap(16);
+        map.put("age",age);
+        map.put("pageNo",1);
+        map.put("pageSize",10);
+        List list =userService.queryUserListByGteAge(map);
+        PageListVo<User> userPageListVo = new PageListVo<>();
+        userPageListVo.setPageNo(1);
+        userPageListVo.setPageSize(10);
+        userPageListVo.setPageList(list);
+        if (ObjectUtils.isEmpty(list)){
+            userPageListVo.setMsg("失败");
+
+        }
+        userPageListVo.setMsg("成功");
+        return userPageListVo;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/user/sort")
+    public List getUserListSortByAge(){
+
+        return userService.queryUserListSortByAge();
+
+
+    }
+
+
 
 
 }

@@ -65,4 +65,18 @@ public interface UserService {
      * @return
      */
     List queryUserListByNameOrAge(Map parmMap);
+
+
+    /**
+     * 查询age大于指定值的User
+     * @param map
+     * @return
+     */
+    List queryUserListByGteAge(Map map);
+
+    /**
+     * 根据age排序
+     * @return
+     */
+    List queryUserListSortByAge();
 }
