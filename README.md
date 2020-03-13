@@ -1,0 +1,6 @@
+# springbootDemo
+springboot相关学习demo
+springboot-mongodb springboot集成mongodb的demo 使用redis为每个集合生成唯一id值 使用fastJson完成redis序列化
+springfox springboot 集成接口文档生成工具 swagger2的demo 
+time_task springboot集成mybatis完成spring-task动态定时任务demo 包括执行python脚本
+。。。
