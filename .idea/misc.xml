@@ -6,6 +6,7 @@
         <option value="$PROJECT_DIR$/springboot-mongodb/pom.xml" />
         <option value="$PROJECT_DIR$/springfox/pom.xml" />
         <option value="$PROJECT_DIR$/time_task/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-weixin/pom.xml" />
       </list>
     </option>
   </component>

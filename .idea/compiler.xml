@@ -7,12 +7,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="springboot-mongodb" />
+        <module name="springboot-weixin" />
         <module name="springfox" />
         <module name="time_task" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="springboot-mongodb" target="1.8" />
+      <module name="springboot-weixin" target="1.8" />
       <module name="springfox" target="1.8" />
       <module name="time_task" target="1.8" />
     </bytecodeTargetLevel>
@@ -20,6 +22,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="springboot-mongodb" options="-parameters" />
+      <module name="springboot-weixin" options="-parameters" />
       <module name="springfox" options="-parameters" />
       <module name="time_task" options="-parameters" />
     </option>

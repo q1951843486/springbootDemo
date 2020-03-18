@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/springboot-mongodb/springboot-mongodb.iml" filepath="$PROJECT_DIR$/springboot-mongodb/springboot-mongodb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-weixin/springboot-weixin.iml" filepath="$PROJECT_DIR$/springboot-weixin/springboot-weixin.iml" />
       <module fileurl="file://$PROJECT_DIR$/springfox/springfox.iml" filepath="$PROJECT_DIR$/springfox/springfox.iml" />
       <module fileurl="file://$PROJECT_DIR$/time_task/time_task.iml" filepath="$PROJECT_DIR$/time_task/time_task.iml" />
     </modules>
