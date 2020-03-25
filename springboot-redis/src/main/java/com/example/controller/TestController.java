@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.example.modul.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description
@@ -32,9 +34,6 @@ public class TestController {
     @ResponseBody
     @RequestMapping(value = "/add")
     public List addList(){
-
-
-
         redisTemplate.opsForList().rightPushAll("students",getList());
         return getList();
 
@@ -61,6 +60,7 @@ public class TestController {
         List<Student> students =getList();
         List<String> jsonList =JsonUtils.setList(students);
         redisTemplate.opsForList().rightPushAll("student",jsonList);
+        redisTemplate.expire("student",15, TimeUnit.SECONDS);
         return jsonList;
     }
 
@@ -68,6 +68,7 @@ public class TestController {
     @ResponseBody
     @RequestMapping(value = "/getJson")
     public List<Student> getJsonList(){
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
 
         return JsonUtils.getList(redisTemplate.opsForList().range("student",0,-1));
 

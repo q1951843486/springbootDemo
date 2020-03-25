@@ -15,14 +15,18 @@ import java.util.List;
 public class JsonUtils {
 
 
+    /**
+     *
+     * @param parmList
+     * @param <T>
+     * @return
+     */
     public static <T> List<T> getList(List<String> parmList){
         List<T> list = new ArrayList<>();
 
         for (String str:parmList) {
             list.add((T)JSON.parse(str));
         }
-
-
         return list;
     }
     public static <T> List<String> setList(List<T> list){
