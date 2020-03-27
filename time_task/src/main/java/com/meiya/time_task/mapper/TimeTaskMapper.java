@@ -52,4 +52,10 @@ public interface TimeTaskMapper {
      * @mbg.generated Tue Feb 25 11:40:57 CST 2020
      */
     int updateByPrimaryKey(TimeTask record);
+
+    /**
+     * 插入并返回主键
+     * @param timeTask
+     */
+    void insertTimeTask(TimeTask timeTask);
 }
