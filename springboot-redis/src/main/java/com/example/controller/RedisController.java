@@ -2,7 +2,6 @@ package com.example.controller;
 
 import com.example.config.RedisBloomFilter;
 import com.example.config.RedisBloomFilterUtils;
-import com.example.modul.Student;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Funnel;
 import org.springframework.beans.factory.annotation.Autowired;
