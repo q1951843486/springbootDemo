@@ -16,7 +16,7 @@ import java.util.*;
  * @Author Administrator
  * @date 2020.03.27 16:43
  */
-@Component
+
 public abstract class BaseDao<T> {
 
 

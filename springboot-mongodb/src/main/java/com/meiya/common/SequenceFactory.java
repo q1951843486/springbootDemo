@@ -37,7 +37,8 @@ public class SequenceFactory  {
                 delta=1L;
             }
             return redisTemplate.opsForHash().increment(key, hashKey, delta);
-        } catch (Exception e) {//redis宕机时采用uuid的方式生成唯一id
+        } catch (Exception e) {
+            //redis宕机时采用uuid的方式生成唯一id
             int first = new Random(10).nextInt(8) + 1;
             int randNo= UUID.randomUUID().toString().hashCode();
             if (randNo < 0) {
