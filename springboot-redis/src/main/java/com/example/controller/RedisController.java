@@ -5,6 +5,8 @@ import com.example.config.RedisBloomFilterUtils;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Funnel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,6 +63,11 @@ public class RedisController {
     @ResponseBody
     @RequestMapping(value = "/redis/{name}")
     public String get(@PathVariable("name")String name){
+
+
+        RedisTemplate redisTemplate = new RedisTemplate();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+
 
         boolean include = redisBloomFilterUtils.includeByBloomFilter(studentRedisBloomFilter, "suspects", name);
 
