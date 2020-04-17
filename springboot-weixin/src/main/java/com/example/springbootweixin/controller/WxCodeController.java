@@ -20,7 +20,6 @@ public class WxCodeController {
 
     public static void main(String[] args) {
 
-
         System.out.println(Constants.ACCESS_TOKEN_URL);
         String token = "31_0-YkGYyuisoDYqQpIbmSkRMeXZZG8DMYe2Gq1Hba6YQ9LI-SJPgq0zwx3kq_CXZac4E8fP5Ky0ZL3DG47Fnye0BcVKwKqpMzlEs_djhmbkNd2sjT63BhVFn2cZyCmQ7aAv2RFzsQISnY8KbbZOFiAAAUJA";
 
