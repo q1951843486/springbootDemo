@@ -4,6 +4,7 @@ import com.example.common.Constants;
 import com.example.common.PageUtils;
 import com.example.modul.Population;
 import com.example.modul.Random;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.http.Consts;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -82,8 +83,9 @@ public class DateInputController {
     public List insertList(){
 
         int pageIndex = 250;
-        for (int i = 0; i <9000 ; i++) {
-            Integer pageSize = new Integer(1000);
+        for (int i = 0; i <900 ; i++) {
+            Long startTime = System.currentTimeMillis();
+            Integer pageSize = new Integer(10000);
             Pageable pageRequest = new PageRequest(pageIndex,pageSize);
             Query query = new Query();
             query.with(pageRequest);
@@ -102,8 +104,11 @@ public class DateInputController {
             });
 
             elasticsearchTemplate.bulkIndex(queries);
+            Long endTime = System.currentTimeMillis();
             pageIndex++;
             System.out.println(pageIndex);
+            System.out.println(endTime-startTime);
+            System.out.println("///////////////////////");
 
         }
 
@@ -116,11 +121,19 @@ public class DateInputController {
      * @param name
      * @return
      */
-    @RequestMapping(value = "/es/population/{name}")
-    public List<Population> getPopulationByName(@PathVariable(value = "name")String name){
-        Pageable pageable = new PageRequest(1,100);
-        SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.termQuery("name",name)).withPageable(pageable).build();
-        return elasticsearchTemplate.queryForList(searchQuery,Population.class);
+    @RequestMapping(value = "/es/population")
+    public List<Population> getPopulationByName(String name){
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.matchQuery("name",name)).build();
+        List list = elasticsearchTemplate.queryForList(searchQuery,Population.class);
+        System.out.println(list.size());
+        if (ObjectUtils.allNotNull(list)){
+            list.forEach(population -> System.out.println(population));
+        }
+        return list;
     }
+
+    /**
+     *
+     */
 
 }
