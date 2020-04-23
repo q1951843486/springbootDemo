@@ -1,26 +1,17 @@
 package com.example.controller;
 
 import com.example.common.Constants;
-import com.example.common.PageUtils;
 import com.example.modul.Population;
 import com.example.modul.Random;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.http.Consts;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.querydsl.QPageRequest;
-import org.springframework.data.repository.support.PageableExecutionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +25,7 @@ import java.util.UUID;
  * @Author Administrator
  * @date 2020.04.15 13:59
  */
-@RestController
+@RestController(value = "/es")
 public class DateInputController {
 
 
@@ -62,7 +53,7 @@ public class DateInputController {
      * 往es插入单条数据
      * @return
      */
-    @RequestMapping(value = "/es/insert")
+    @RequestMapping(value = "/insert")
     public List insert(){
 
         Population population = new Population();
@@ -79,17 +70,19 @@ public class DateInputController {
     /**
      *
      */
-    @RequestMapping(value = "/es/insertList")
+    @RequestMapping(value = "/insertList")
     public List insertList(){
 
-        int pageIndex = 250;
-        for (int i = 0; i <900 ; i++) {
+        int pageIndex = 0;
+        for (int i = 0; i <3000 ; i++) {
             Long startTime = System.currentTimeMillis();
             Integer pageSize = new Integer(10000);
             Pageable pageRequest = new PageRequest(pageIndex,pageSize);
             Query query = new Query();
             query.with(pageRequest);
+
             List<Random> list = mongoTemplate.find(query, Random.class);
+            System.out.println(System.currentTimeMillis()-startTime);
             List<IndexQuery> queries = new ArrayList<>();
             list.forEach(random -> {
                 Population population = new Population();
@@ -121,7 +114,7 @@ public class DateInputController {
      * @param name
      * @return
      */
-    @RequestMapping(value = "/es/population")
+    @RequestMapping(value = "/population")
     public List<Population> getPopulationByName(String name){
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.matchQuery("name",name)).build();
         List list = elasticsearchTemplate.queryForList(searchQuery,Population.class);
@@ -132,8 +125,7 @@ public class DateInputController {
         return list;
     }
 
-    /**
-     *
-     */
+
+
 
 }
