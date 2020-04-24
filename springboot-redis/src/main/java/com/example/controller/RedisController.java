@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.common.HttpClientUtils;
 import com.example.config.RedisBloomFilter;
 import com.example.config.RedisBloomFilterUtils;
 import com.google.common.base.Charsets;
@@ -8,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -80,8 +81,40 @@ public class RedisController {
         }
 
     }
+    @RequestMapping(value = "/getName",method = RequestMethod.POST)
+    @ResponseBody
+    public String getName(String name){
 
+        RedisTemplate redisTemplate = new RedisTemplate();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        boolean include = redisBloomFilterUtils.includeByBloomFilter(studentRedisBloomFilter, "suspects", name);
+        if (include){
 
+            return "存在";
+
+        }else {
+            return "不存在";
+        }
+    }
+    @RequestMapping(value = "/test")
+    @ResponseBody
+    public String test(){
+
+        String url = "http://10.200.1.194/getName";
+        Map parmMap = new HashMap();
+        String s = new String();
+        parmMap.put("name","张三");
+        try {
+             s = HttpClientUtils.doPost(url, parmMap);
+            System.out.println(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return s;
+
+    }
+  
 
 
 }
