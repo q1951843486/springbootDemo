@@ -3,7 +3,9 @@ package com.example.controller;
 import com.example.common.Constants;
 import com.example.modul.Population;
 import com.example.modul.Random;
+import com.mongodb.client.MongoCollection;
 import org.apache.commons.lang3.ObjectUtils;
+import org.bson.Document;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -13,11 +15,12 @@ import org.springframework.data.elasticsearch.core.query.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @Description
@@ -25,7 +28,7 @@ import java.util.UUID;
  * @Author Administrator
  * @date 2020.04.15 13:59
  */
-@RestController(value = "/es")
+@RestController()
 public class DateInputController {
 
 
@@ -125,6 +128,25 @@ public class DateInputController {
         return list;
     }
 
+    @RequestMapping(value = "/query",method = RequestMethod.POST)
+    public List queryEsByNameAndIdCard(String name ,String idCard){
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.matchQuery("name",name)).withQuery(QueryBuilders.matchQuery("idCard",idCard)).build();
+        List list = elasticsearchTemplate.queryForList(searchQuery,Population.class);
+        System.out.println(list.size());
+        list.forEach(population -> System.out.println(population));
+        return list;
+    }
+
+
+    @RequestMapping(value = "/count")
+    @ResponseBody
+    public long coount(){
+
+        MongoCollection<Document> test1 = mongoTemplate.getCollection("test1");
+        System.out.println(test1.count());
+        return test1.count();
+
+    }
 
 
 
