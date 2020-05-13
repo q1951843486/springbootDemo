@@ -1,0 +1,23 @@
+arangodb: 
+  hosts: 10.200.1.184:8529
+  user: root
+  password: root
+  database: _system
+server:
+  port: 8080
+
+spring:
+  application:
+    name: arangoDB_performance_test
+  data:  # arangodb配置
+    arangodb:
+      hosts: ${arangodb.hosts}
+      user: ${arangodb.user}
+      database: ${arangodb.database}
+      password: ${arangodb.password}
+      protocol: HTTP_JSON
+      #内置连接池将为每个主机打开的最大连接数
+      #该参数不宜配置过大, 否则会引起占用过多tcp连接数，从而报SocketException: Too many open files的错误, 默认配置为1
+      maxConnections: 1000
+      connection-ttl: 10000
+      timeout: 5000000
