@@ -23,4 +23,7 @@ public class Test2 implements Serializable{
 	private String randName;
 	
 	private String randNum;
+
+
+
 }

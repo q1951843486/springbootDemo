@@ -1,23 +1,31 @@
 package test;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.arangodb.Protocol;
 import com.arangodb.spark.ArangoSpark;
 import com.arangodb.spark.ReadOptions;
 import com.arangodb.spark.WriteOptions;
 import com.arangodb.spark.rdd.api.java.ArangoJavaRDD;
+import entity.Test1;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import scala.Tuple2;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description
@@ -88,6 +96,14 @@ public class SparkOperationArangoDbUtils {
                 .getOrCreate();
     }
     public static JavaSparkContext getJavaSparkContext() {
+        SparkConf conf = new SparkConf(false).setMaster("spark://spark01:7077").set("spark.executor.memory", "8g")
+                .setAppName("test");
+        JavaSparkContext sc = new JavaSparkContext(conf);
+        // 设置日志输出等级 有一些启动信息的日志没必要看
+        sc.setLogLevel("WARN");
+        return sc;
+    }
+    public static JavaSparkContext getJavaSparkContextDev() {
         SparkConf conf = new SparkConf(false).setMaster("local").set("spark.executor.memory", "4g")
                 .setAppName("test");
         JavaSparkContext sc = new JavaSparkContext(conf);
@@ -225,44 +241,51 @@ public class SparkOperationArangoDbUtils {
 
 
         JavaSparkContext sc = getJavaSparkContext();
-        sc.addJar("/home/spark/spark-2.4.5/test.jar");
+        //sc.addJar("/home/spark/spark-2.4.5/test.jar");
         long start = System.currentTimeMillis();
         //System.out.println(start);
-        ArangoJavaRDD<T> rdd = ArangoSpark.load(sc, primaryTable, new ReadOptions().hosts("10.200.1.183:8529").database(DB).protocol(Protocol.HTTP_JSON),
+        JavaRDD<T> rdd = ArangoSpark.load(sc, primaryTable, new ReadOptions().hosts("10.200.1.183:8529").database(DB).protocol(Protocol.HTTP_JSON),
                 queryClass);
+
         //System.out.println(rdd.count());
         long end = System.currentTimeMillis();
+
         log.info("☆☆☆☆☆☆☆ spark读取arangodb数据 ☆☆☆☆☆☆☆  collection:{} **** 数据量: {} **** takeTime: {}毫秒",queryClass,rdd.count(),(end - start));
         SparkSession spark = getJavaSparkSession();
         Dataset<Row> dataset = spark.createDataFrame(rdd, queryClass);
         dataset.createOrReplaceTempView("test2");
 
         end = System.currentTimeMillis();
-        System.out.println(end -start);
+        System.out.println("读取arangDB"+primaryTable+" 数据到 spark" + (end - start) );
         //System.out.println(System.currentTimeMillis());
-        ArangoJavaRDD<T> rdd1 = ArangoSpark.load(sc, assoviationTable, new ReadOptions().hosts("10.200.1.183:8529").database(DB).protocol(Protocol.HTTP_JSON),
+        JavaRDD<T> rdd1 = ArangoSpark.load(sc, assoviationTable, new ReadOptions().hosts("10.200.1.183:8529").database(DB).protocol(Protocol.HTTP_JSON),
                 queryClass);
         log.info("☆☆☆☆☆☆☆ spark读取arangodb数据 ☆☆☆☆☆☆☆  collection:{} **** 数据量: {} **** takeTime: {}毫秒",queryClass,rdd1.count(),(end - start));
         //System.out.println(rdd1.count());
         Dataset dataset1 =spark.createDataFrame(rdd1,queryClass);
         dataset1.createOrReplaceTempView("test1");
         start = System.currentTimeMillis();
-        System.out.println(start - end);
-
+        System.out.println("读取arangDB"+assoviationTable+" 数据到 spark" + (start - end));
         Dataset<Row> joinDataset = spark.sql(sql);
+        //List<T> jsonArray = joinDataset.as(Encoders.bean(queryClass)).collectAsList();
+
+
 
         end = System.currentTimeMillis();
-        System.out.println(end -start);
-        //System.out.println(System.currentTimeMillis());
-        System.out.println(joinDataset.count());
+        System.out.println("spark sql 执行时间" + (end -start));
+        //System.out.println(joinDataset.count());
+        start = System.currentTimeMillis();
+       /* List<String> jsonList = dataset.toJSON().collectAsList();
+        List<T> jsonArray = (List<T>) jsonList.stream().map(jsonString -> JSON.parseObject(jsonString, queryClass)).collect(Collectors.toList());*/
         List jsonArray = RowToJavaBean(joinDataset, queryClass);
-        System.out.println(jsonArray.get(0).toString());
+        end = System.currentTimeMillis();
+        System.out.println("数据集映射java对象时间" +(end - start));
+        //System.out.println(jsonArray.get(0).toString());
         JavaRDD<T> documents = sc.parallelize(jsonArray);
         start = System.currentTimeMillis();
-        System.out.println(start -end);
         ArangoSpark.save(documents, resultTable, new WriteOptions().hosts("10.200.1.183:8529").database(DB).protocol(Protocol.HTTP_JSON));
         end = System.currentTimeMillis();
-        System.out.println(end -start);
+        System.out.println("spark 写入arangodb数据库时间" +(end -start));
         log.info("☆☆☆☆☆☆☆ spark写入arangodb数据 ☆☆☆☆☆☆☆  collection:{} **** 数据量: {} **** takeTime: {}毫秒",queryClass,documents.count(),(end - start));
         closeJavaSparkSession(spark);
         closeJavaSparkContext(sc);
@@ -278,29 +301,10 @@ public class SparkOperationArangoDbUtils {
      * @return
      */
     public  static <T> List RowToJavaBean(Dataset<Row> dataset,Class<T> querycollectionClass){
-        List<T> list = new ArrayList<>();
 
-        String[] columns = dataset.columns();
-        List<Row> rows = dataset.collectAsList();
-        List<Row> jsonArray = new ArrayList<Row>();
-		/*for (Row row : rows) {
-			JSONObject json = new JSONObject();
-			for (int i = 0; i < columns.length; i++) {
-				json.put(columns[i], row.get(i));
-			}
-			jsonArray.add((T) JSONObject.toBean(json, querycollectionClass));
-		}*/
-        for (Row r : rows) {
-
-            JSONObject jsonObject = new JSONObject();
-            for (int i = 0; i < columns.length; i++) {
-
-                jsonObject.put(columns[i], r.get(i));
-            }
-            list.add((T) jsonObject.toJavaObject((Type) querycollectionClass));
-
-        }
-        return list;
+        List<String> jsonList = dataset.toJSON().collectAsList();
+        List<T> jsonArray = (List<T>) jsonList.stream().map(jsonString -> JSON.parseObject(jsonString, querycollectionClass)).collect(Collectors.toList());
+        return jsonArray;
     }
 
 }

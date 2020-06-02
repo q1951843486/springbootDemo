@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.common.HttpClientUtils;
+import com.example.common.SequenceFactory;
 import com.example.config.RedisBloomFilter;
 import com.example.config.RedisBloomFilterUtils;
 import com.google.common.base.Charsets;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -100,18 +102,21 @@ public class RedisController {
     @ResponseBody
     public String test(){
 
-        String url = "http://10.200.1.194/getName";
-        Map parmMap = new HashMap();
-        String s = new String();
-        parmMap.put("name","张三");
-        try {
-             s = HttpClientUtils.doPost(url, parmMap);
-            System.out.println(s);
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (int i = 0; i < 10000; i++) {
+            String url = "http://10.200.1.194/getName";
+            Map parmMap = new HashMap();
+            String s = new String();
+            parmMap.put("name","张三");
+            try {
+                s = HttpClientUtils.doPost(url, parmMap);
+                System.out.println(s);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
-        return s;
+
+        return "ll";
 
     }
   

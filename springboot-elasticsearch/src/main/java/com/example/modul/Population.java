@@ -2,9 +2,7 @@ package com.example.modul;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.*;
 
 /**
  * @Description
@@ -19,12 +17,15 @@ public class Population {
 
     @Id
     @Field(index = false,type = FieldType.Keyword,store = true)
-    private long id;
+    private String id;
 
     /**
      * 姓名 使用ik分词器 最大分词
      */
-    @Field(index = true,type = FieldType.Text,analyzer = "ik_max_word")
+
+    //@Field(index = true,type = FieldType.Text,analyzer = "ik_max_word")
+    @MultiField(mainField = @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart"), otherFields = {
+            @InnerField(type = FieldType.Keyword, suffix = "keyword") })
     private String name;
     /**
      * 身份证号

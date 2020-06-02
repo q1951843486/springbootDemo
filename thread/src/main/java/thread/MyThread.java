@@ -7,6 +7,7 @@ package thread;
  * @date 2020.03.31 10:18
  */
 public class MyThread implements Runnable{
+    @Override
     public void run() {
         int number = 100;
         for (int i = 0; i <number ; i++) {
